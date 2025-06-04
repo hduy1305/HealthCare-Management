@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm Bác sĩ mới</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 50px;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 30px 40px;
+            width: 100%;
+            max-width: 800px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        fieldset {
+            border: 1px solid #dcdde1;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        legend {
+            font-weight: bold;
+            color: #2980b9;
+            font-size: 18px;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+            color: #34495e;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #fafafa;
+            font-size: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #2980b9;
+            background-color: #fff;
+        }
+
+        button[type="submit"] {
+            background-color: #27ae60;
+            color: white;
+            font-size: 16px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #219150;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Thêm Bác sĩ mới</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <fieldset>
+            <legend>Họ tên</legend>
+            {{ fullname_form.as_p }}
+        </fieldset>
+
+        <fieldset>
+            <legend>Địa chỉ</legend>
+            {{ address_form.as_p }}
+        </fieldset>
+
+        <fieldset>
+            <legend>Thông tin bác sĩ</legend>
+            {{ doctor_form.as_p }}
+        </fieldset>
+
+        <button type="submit">Lưu</button>
+    </form>
+</div>
+
+</body>
+</html>

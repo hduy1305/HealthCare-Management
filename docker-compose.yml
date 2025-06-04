@@ -1,0 +1,145 @@
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: user_service_db 
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+  
+  mysql-patient:
+    image: mysql:8.0
+    container_name: mysql-patient
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: patient_service_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql-patient-data:/var/lib/mysql
+
+  mysql-doctor:
+    image: mysql:8.0
+    container_name: mysql-doctor
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: doctor_service_db
+    ports:
+      - "3309:3306"
+    volumes:
+      - mysql-doctor-data:/var/lib/mysql
+
+  mysql-appointment:
+    image: mysql:8.0
+    container_name: mysql-appointment
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: appointment_service_db
+    ports:
+      - "3310:3306"
+    volumes:
+      - mysql-appointment-data:/var/lib/mysql
+
+  user-service:
+    build: ./user_service
+    container_name: user-service
+    # command: python manage.py runserver 0.0.0.0:8000
+    command: ["./wait-for-mysql.sh", "mysql", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+    volumes:
+      - ./user_service:/app
+    ports:
+      - "8001:8000"
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=user_service_db
+      - DB_USER=root
+      - DB_PASSWORD=123456
+
+  patient-service:
+    build:
+      context: ./patient_service
+    container_name: patient-service
+    command: ["./wait-for-mysql.sh", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+    volumes:
+      - ./patient_service:/app
+    ports:
+      - "8002:8000"
+    depends_on:
+      - mysql-patient
+    environment:
+      DB_NAME: patient_service_db
+      DB_USER: root
+      DB_PASSWORD: 123456
+      DB_HOST: mysql-patient
+      DB_PORT: 3306
+
+  doctor-service:
+    build:
+      context: ./doctor_service
+    container_name: doctor-service
+    command: ["/wait-for-mysql.sh", "mysql-doctor", "3306", "sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+    volumes:
+      - ./doctor_service:/app
+    ports:
+      - "8003:8000"
+    depends_on:
+      - mysql-doctor
+    environment:
+      DB_NAME: doctor_service_db
+      DB_USER: root
+      DB_PASSWORD: 123456
+      DB_HOST: mysql-doctor
+      DB_PORT: 3306
+  # Các service còn lại bạn sẽ định nghĩa tương tự như trên...
+  
+  appointment-service:
+    build:
+      context: ./appointment_service
+    container_name: appointment-service
+    command: ["./wait-for-mysql.sh", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+    volumes:
+      - ./appointment_service:/app
+    ports:
+      - "8004:8000"
+    depends_on:
+      - mysql-appointment
+      - patient-service
+      - doctor-service
+    environment:
+      DB_NAME: appointment_service_db
+      DB_USER: root
+      DB_PASSWORD: 123456
+      DB_HOST: mysql-appointment
+      DB_PORT: 3306
+
+
+  api-gateway:
+    build: ./api_gateway
+    container_name: api-gateway
+    command: python manage.py runserver 0.0.0.0:8008
+    ports:
+      - "8008:8008"
+    depends_on:
+      - user-service
+      - patient-service
+      - doctor-service
+      - appointment-service
+      # - medical-record-service
+      # - payment-service
+      # - notification-service
+
+volumes:
+  mysql-data:
+  mysql-patient-data:
+  mysql-doctor-data:
+  mysql-appointment-data:

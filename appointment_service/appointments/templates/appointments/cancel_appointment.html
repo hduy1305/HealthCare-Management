@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Huỷ cuộc hẹn #{{ appointment.id }}</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding-top: 50px;
+        }
+        .container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px 40px;
+        }
+        h2 {
+            margin: 0 0 25px 0;
+            text-align: center;
+            color: #2c3e50;
+            font-size: 26px;
+        }
+        .info {
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .info strong {
+            color: #2980b9;
+        }
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 6px;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            min-width: 140px;
+        }
+        .btn-cancel {
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+        }
+        .btn-cancel:hover {
+            background-color: #c0392b;
+        }
+        .btn-back {
+            background-color: #bdc3c7;
+            color: #2c3e50;
+            border: none;
+        }
+        .btn-back:hover {
+            background-color: #95a5a6;
+        }
+        @media screen and (max-width: 480px) {
+            .info {
+                font-size: 15px;
+            }
+            .btn {
+                width: 100%;
+                max-width: 100%;
+                margin-bottom: 10px;
+            }
+            .actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Huỷ cuộc hẹn #{{ appointment.id }}</h2>
+
+    <div class="info">
+        Bạn có chắc muốn huỷ cuộc hẹn với bác sĩ
+        <strong>Dr. {{ appointment.doctor_name }}</strong>
+        và bệnh nhân
+        <strong>{{ appointment.patient_name }}</strong>
+        vào lúc
+        <strong>{{ appointment.appointment_time }}</strong>?
+    </div>
+
+    <div class="actions">
+        <form method="post" action="{% url 'cancel_appointment' appointment.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-cancel">Vâng, Huỷ cuộc hẹn</button>
+        </form>
+        <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-back">Không, Quay lại</a>
+    </div>
+</div>
+
+</body>
+</html>

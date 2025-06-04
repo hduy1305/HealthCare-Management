@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang chủ - Doctor Service</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        p {
+            margin-bottom: 30px;
+            color: #555;
+        }
+
+        .nav-links a {
+            display: block;
+            margin: 10px 0;
+            padding: 12px;
+            background-color: #2980b9;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: #1c5980;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Doctor Service</h1>
+        <p>Hệ thống quản lý bác sĩ và chuyên khoa</p>
+
+        <div class="nav-links">
+            <a href="{% url 'doctor_list' %}">📋 Danh sách bác sĩ</a>
+            <a href="{% url 'speciality_list' %}">🏥 Danh sách chuyên khoa</a>
+            <a href="{% url 'add_doctor' %}">➕ Thêm bác sĩ mới</a>
+        </div>
+    </div>
+</body>
+</html>

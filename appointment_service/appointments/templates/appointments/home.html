@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang Chủ – Appointment Service</title>
+    <style>
+        /* --- CSS giữ nguyên như trước --- */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding-top: 50px;
+        }
+        .container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 30px 40px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        h1 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 32px;
+        }
+        p.description {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        .links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .links a {
+            display: inline-block;
+            background-color: #2980b9;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .links a:hover {
+            background-color: #1f6391;
+        }
+        .form-container {
+            background-color: #f9f9f9;
+            padding: 20px 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: inline-block;
+            text-align: left;
+            max-width: 500px;
+            width: 100%;
+        }
+        .form-container h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #34495e;
+        }
+        .form-group select,
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: #fff;
+            transition: border-color 0.3s ease;
+        }
+        .form-group select:focus,
+        .form-group input[type="text"]:focus {
+            outline: none;
+            border-color: #2980b9;
+        }
+        .form-group button {
+            margin-top: 10px;
+            width: 100%;
+            background-color: #27ae60;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .form-group button:hover {
+            background-color: #219150;
+        }
+        @media screen and (max-width: 600px) {
+            .links {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .form-container {
+                padding: 15px 20px;
+            }
+            .form-group button {
+                padding: 10px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Appointment Service</h1>
+    <p class="description">
+        Chào mừng đến với hệ thống quản lý cuộc hẹn.<br>
+        Tại đây bạn có thể tạo, xem và quản lý các cuộc hẹn giữa bệnh nhân và bác sĩ.
+    </p>
+
+    <div class="links">
+        <a href="{% url 'create_appointment' %}">➕ Tạo cuộc hẹn mới</a>
+        <a href="#" onclick="document.getElementById('list-form').scrollIntoView({behavior: 'smooth'});">
+            📋 Xem danh sách cuộc hẹn
+        </a>
+    </div>
+
+    <div id="list-form" class="form-container">
+        <h2>Xem danh sách cuộc hẹn</h2>
+        <form id="view-form" onsubmit="handleViewForm(event);">
+            <div class="form-group">
+                <label for="user_type">Chọn loại:</label>
+                <select id="user_type" name="user_type" required>
+                    <option value="patient">Bệnh nhân</option>
+                    <option value="doctor">Bác sĩ</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="user_id">Nhập ID:</label>
+                <input type="text" id="user_id" name="user_id" placeholder="Ví dụ: 1" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Xem danh sách</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function handleViewForm(event) {
+        event.preventDefault();
+
+        // Lấy giá trị user_type và user_id
+        const userType = document.getElementById('user_type').value;
+        let userId = document.getElementById('user_id').value.trim();
+
+        // 1. Loại bỏ mọi dấu gạch chéo / thừa ở đầu/cuối
+        userId = userId.replace(/^\/+|\/+$/g, '');
+
+        // 2. Kiểm tra userId chỉ chứa chữ số (nghĩa là một số nguyên dương)
+        const isNumeric = /^[0-9]+$/.test(userId);
+
+        if (!isNumeric) {
+            // Nếu không phải số, show popup lỗi và không chuyển trang
+            alert('ID phải là một số nguyên hợp lệ. Vui lòng nhập lại.');
+            return;
+        }
+
+        // 3. Xây dựng URL đúng định dạng: /appointments/{user_type}/{user_id}/
+        const url = `/appointments/${userType}/${userId}/`;
+        window.location.href = url;
+    }
+</script>
+
+</body>
+</html>

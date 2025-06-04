@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Thông tin bệnh nhân</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f9fc;
+      color: #333;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+    .info-group {
+  background-color: #fff;
+  padding: 25px 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  margin-bottom: 25px;
+  display: grid;
+  grid-template-columns: 1fr; /* CHỈ 1 CỘT */
+  row-gap: 12px; /* Khoảng cách giữa các dòng */
+    }
+    .info-item {
+        display: flex;
+        font-size: 17px;
+        line-height: 1.6;
+        padding-bottom: 8px;
+        margin-bottom: 8px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .info-item strong {
+      color: #2980b9;
+      min-width: 140px;
+      display: inline-block;
+    }
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    a.btn {
+      background-color: #2980b9;
+      color: white;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 3px 8px rgba(41, 128, 185, 0.5);
+      transition: background-color 0.3s ease;
+      display: inline-block;
+      min-width: 160px;
+      text-align: center;
+    }
+    a.btn:hover {
+      background-color: #1c5980;
+      box-shadow: 0 5px 14px rgba(28, 89, 128, 0.7);
+    }
+
+    /* Responsive cho mobile */
+    @media (max-width: 768px) {
+      .info-group {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Thông tin bệnh nhân</h1>
+
+  <div class="info-group">
+    <div class="info-item"><strong>Họ tên:</strong> {{ patient.fullname.last_name }} {{ patient.fullname.middle_name }} {{ patient.fullname.first_name }}</div>
+    <div class="info-item"><strong>Điện thoại:</strong> {{ patient.phone }}</div>
+
+    <div class="info-item"><strong>Email:</strong> {{ patient.email }}</div>
+    <div class="info-item"><strong>Ngày sinh:</strong> {{ patient.date_of_birth }}</div>
+
+    <div class="info-item"><strong>Giới tính:</strong> {{ patient.gender }}</div>
+    <div class="info-item"><strong>Địa chỉ:</strong> {{ patient.address.street }}, {{ patient.address.district }}, {{ patient.address.city }}, {{ patient.address.province }}</div>
+
+    {% if patient_type == 'outpatient' %}
+      <div class="info-item"><strong>Lý do khám:</strong> {{ patient.visit_reason }}</div>
+    {% elif patient_type == 'inpatient' %}
+      <div class="info-item"><strong>Số phòng:</strong> {{ patient.room_number }}</div>
+      <div class="info-item"><strong>Ngày nhập viện:</strong> {{ patient.admission_date }}</div>
+      <div class="info-item"><strong>Ngày xuất viện:</strong> {{ patient.discharge_date }}</div>
+    {% elif patient_type == 'emergency' %}
+      <div class="info-item"><strong>Mức độ cấp cứu:</strong> {{ patient.emergency_level }}</div>
+      <div class="info-item"><strong>Thời gian đến:</strong> {{ patient.arrival_time }}</div>
+      <div class="info-item"><strong>Ghi chú:</strong> {{ patient.notes }}</div>
+    {% endif %}
+  </div>
+
+  <div class="btn-group">
+    <a href="{% url 'update_patient_profile' patient.id %}" class="btn">Cập nhật thông tin</a>
+    <a href="{% url 'list_patient_history' patient.id %}" class="btn">Lịch sử khám</a>
+    <a href="{% url 'dashboard' %}" class="btn">Trở về danh sách</a>
+  </div>
+</body>
+</html>

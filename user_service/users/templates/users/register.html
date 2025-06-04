@@ -1,0 +1,32 @@
+{% extends 'users/base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<h2>Register</h2>
+<form method="post">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label for="id_username" class="form-label">Username</label>
+    <input type="text" name="username" class="form-control" id="id_username">
+  </div>
+  <div class="mb-3">
+    <label for="id_email" class="form-label">Email</label>
+    <input type="email" name="email" class="form-control" id="id_email">
+  </div>
+  <div class="mb-3">
+    <label for="id_password1" class="form-label">Password</label>
+    <input type="password" name="password1" class="form-control" id="id_password1">
+  </div>
+  <div class="mb-3">
+    <label for="id_password2" class="form-label">Confirm Password</label>
+    <input type="password" name="password2" class="form-control" id="id_password2">
+  </div>
+  <div class="mb-3">
+    <label for="id_role" class="form-label">Role</label>
+    <select name="role" class="form-select" id="id_role">
+      <option value="patient">Patient</option>
+      <option value="doctor">Doctor</option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Register</button>
+</form>
+{% endblock %}

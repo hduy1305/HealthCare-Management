@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <title>Cập nhật thông tin bệnh nhân</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f9fc;
+      color: #333;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+    form {
+      background-color: #fff;
+      padding: 25px 30px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    form fieldset {
+      border: none;
+      padding: 0;
+    }
+    form legend {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #34495e;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #2980b9;
+      outline: none;
+      box-shadow: 0 0 6px #a6c8ff;
+    }
+    button[type="submit"] {
+      background-color: #2980b9;
+      color: white;
+      font-weight: 600;
+      padding: 12px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(41, 128, 185, 0.6);
+      transition: background-color 0.3s ease;
+      margin-top: 10px;
+    }
+    button[type="submit"]:hover {
+      background-color: #1c5980;
+    }
+    a.back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #2980b9;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: color 0.3s ease;
+    }
+    a.back-link:hover {
+      color: #1c5980;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>Cập nhật thông tin bệnh nhân</h1>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <fieldset>
+      <legend>Họ và tên</legend>
+      {{ fullname_form.as_p }}
+    </fieldset>
+
+    <fieldset>
+      <legend>Địa chỉ</legend>
+      {{ address_form.as_p }}
+    </fieldset>
+
+    <fieldset>
+      <legend>Thông tin loại bệnh nhân</legend>
+      {{ patient_form.as_p }}
+    </fieldset>
+
+    <button type="submit">Lưu</button>
+  </form>
+
+  <a href="{% url 'get_patient_profile' patient.id %}" class="back-link">← Quay lại hồ sơ</a>
+
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+  flatpickr(".datepicker", {
+    dateFormat: "Y-m-d"
+  });
+
+  flatpickr(".datetimepicker", {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i",
+    time_24hr: true
+  });
+</script>
+
+</body>
+</html>

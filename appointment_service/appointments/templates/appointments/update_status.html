@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Cập nhật trạng thái cuộc hẹn #{{ appointment.id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 40px;
+            color: #2c3e50;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        .error-msg {
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 15px;
+            background-color: #fafafa;
+            transition: border-color 0.3s ease;
+        }
+        select:focus {
+            outline: none;
+            border-color: #2980b9;
+            background-color: #fff;
+        }
+        button {
+            background-color: #2980b9;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #1c5980;
+        }
+        .back-link {
+            color: #2980b9;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Cập nhật trạng thái cuộc hẹn #{{ appointment.id }}</h2>
+
+    {% if error %}
+        <div class="error-msg">{{ error }}</div>
+    {% endif %}
+
+    <!-- Chú ý: Dùng namespace 'appointments:update_status' và biến appointment.id -->
+    <form method="post" action="{% url 'update_status' appointment.id %}">
+        {% csrf_token %}
+
+        <label for="status">Chọn trạng thái mới:</label>
+        <select id="status" name="status" required>
+            {% for s in valid_statuses %}
+                <!-- capitalizing đầu chữ bằng filter capfirst -->
+                <option value="{{ s }}" {% if appointment.status == s %}selected{% endif %}>
+                    {{ s|capfirst }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Cập nhật</button>
+    </form>
+
+    <!-- Link quay lại chi tiết: dùng appointment_detail -->
+    <a href="{% url 'appointment_detail' appointment.id %}" class="back-link">
+        ← Quay lại chi tiết cuộc hẹn
+    </a>
+
+</body>
+</html>

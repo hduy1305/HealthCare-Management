@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tạo Cuộc Hẹn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #eef2f7;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      background-color: #ffffff;
+      width: 100%;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .header {
+      background-color: #4a90e2;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    .form-section {
+      padding: 30px 40px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    label {
+      font-weight: 500;
+      margin-bottom: 6px;
+      display: block;
+      color: #2c3e50;
+    }
+    select, input[type="datetime-local"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      background-color: #fdfdfd;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    select:focus, input[type="datetime-local"]:focus {
+      outline: none;
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    }
+    .btn-submit {
+      background-color: #4a90e2;
+      color: #fff;
+      border: none;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      display: block;
+      width: 100%;
+    }
+    .btn-submit:disabled {
+      background-color: #a1c4e9;
+      cursor: not-allowed;
+    }
+    .btn-submit:hover:not(:disabled) {
+      background-color: #357abd;
+      transform: translateY(-2px);
+    }
+    .link {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+    .link a {
+      color: #4a90e2;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+    .link a:hover {
+      color: #357abd;
+      text-decoration: underline;
+    }
+    @media (max-width: 480px) {
+      .form-section {
+        padding: 20px;
+      }
+      .btn-submit {
+        padding: 12px;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Tạo Cuộc Hẹn</h1>
+    </div>
+    <div class="form-section">
+      <form id="appt-form" method="post" action="{% url 'create_appointment' %}">
+        {% csrf_token %}
+
+        <div>
+          <label for="patient">Bệnh nhân:</label>
+          <select id="patient" name="patient_id" required>
+            <option value="" disabled selected>Chọn bệnh nhân...</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="doctor">Bác sĩ:</label>
+          <select id="doctor" name="doctor_id" required>
+            <option value="" disabled selected>Chọn bác sĩ...</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="appt_time">Thời gian hẹn:</label>
+          <input type="datetime-local" id="appt_time" name="appointment_time" required>
+        </div>
+
+        <button type="submit" id="submit-btn" class="btn-submit" disabled>
+          Tạo Cuộc Hẹn
+        </button>
+      </form>
+
+      <div class="link">
+        <a href="{% url 'list_appointments' user_type='patient' user_id=1 %}">
+          ← Quay lại danh sách cuộc hẹn
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const PATIENT_API = 'http://localhost:8002/api/patients/';
+      const DOCTOR_API  = 'http://localhost:8003/api/doctors/';
+
+      const patientSelect = document.getElementById('patient');
+      const doctorSelect  = document.getElementById('doctor');
+      const submitBtn     = document.getElementById('submit-btn');
+
+      try {
+        const [patients, doctors] = await Promise.all([
+          fetch(PATIENT_API).then(res => res.json()),
+          fetch(DOCTOR_API).then(res => res.json())
+        ]);
+
+        patients.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.textContent = p.full_name_str;
+          patientSelect.appendChild(opt);
+        });
+
+        doctors.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.id;
+          opt.textContent = d.full_name_str;
+          doctorSelect.appendChild(opt);
+        });
+
+        // Cho phép bấm nút sau khi dữ liệu đã load
+        submitBtn.disabled = false;
+      } catch (err) {
+        alert('Lỗi tải dữ liệu:\n' + err.message);
+      }
+    });
+  </script>
+</body>
+</html>
