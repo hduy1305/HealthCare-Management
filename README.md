@@ -96,4 +96,6 @@ Dự án được thiết kế gồm nhiều service độc lập giao tiếp v�
 - docker-compose up --build
 
 ---
+## Bản quyền
+- Ngô Hoàng Duy
 
