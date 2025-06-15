@@ -10,6 +10,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
 from django.shortcuts import redirect
+from rest_framework import viewsets
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Type, Room, Appointment
+from .serializers import TypeSerializer, RoomSerializer, AppointmentSerializer
+
 import requests
 import json
 
@@ -236,3 +243,80 @@ def cancel_appointment_view(request, appt_id):
     return render(request, 'appointments/cancel_appointment.html', {
         'appointment': appt
     })
+
+
+# --- ViewSets cho Type, Room, Appointment ---
+class TypeViewSet(viewsets.ModelViewSet):
+    """
+    /api/types/         -> GET list, POST create
+    /api/types/{pk}/    -> GET retrieve, PUT/PATCH update, DELETE destroy
+    """
+    queryset = Type.objects.all()
+    serializer_class = TypeSerializer
+
+
+class RoomViewSet(viewsets.ModelViewSet):
+    """
+    /api/rooms/         -> GET list, POST create
+    /api/rooms/{pk}/    -> GET retrieve, PUT/PATCH update, DELETE destroy
+    """
+    queryset = Room.objects.all()
+    serializer_class = RoomSerializer
+
+
+class AppointmentViewSet(viewsets.ModelViewSet):
+    """
+    /api/appointments/         -> GET list, POST create
+    /api/appointments/{pk}/    -> GET retrieve, PUT/PATCH update, DELETE destroy
+    """
+    queryset = Appointment.objects.all().order_by('-appointment_time')
+    serializer_class = AppointmentSerializer
+
+
+# --- Nếu bạn muốn giữ function-based views, có thể thêm thêm: ---
+
+@api_view(['GET', 'POST'])
+def appointment_list_api(request):
+    """
+    GET  /api/appointments/         -> list all appointments
+    POST /api/appointments/         -> create new appointment
+    """
+    if request.method == 'GET':
+        appts = Appointment.objects.all().order_by('-appointment_time')
+        serializer = AppointmentSerializer(appts, many=True)
+        return Response(serializer.data)
+
+    # POST
+    serializer = AppointmentSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def appointment_detail_api(request, pk):
+    """
+    GET    /api/appointments/{pk}/    -> retrieve one
+    PUT    /api/appointments/{pk}/    -> update all fields
+    DELETE /api/appointments/{pk}/    -> delete
+    """
+    try:
+        appt = Appointment.objects.get(pk=pk)
+    except Appointment.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = AppointmentSerializer(appt)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = AppointmentSerializer(appt, data=request.data, partial=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        appt.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

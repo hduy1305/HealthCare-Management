@@ -1,0 +1,10 @@
+<!-- records/templates/records/record_confirm_delete.html -->
+{% extends 'records/base.html' %}
+{% block content %}
+<h1>Confirm Delete</h1>
+<p>Bạn có chắc muốn xoá Record #{{ record.id }} không?</p>
+<form method="post">{% csrf_token %}
+  <button type="submit" class="btn btn-danger">Yes, delete</button>
+  <a href="{% url 'records:record_detail' record.id %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

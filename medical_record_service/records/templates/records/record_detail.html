@@ -1,0 +1,26 @@
+<!-- records/templates/records/record_detail.html -->
+{% extends 'records/base.html' %}
+{% block content %}
+<h1>Record #{{ record.id }}</h1>
+<ul class="list-group">
+  <li class="list-group-item"><strong>Patient:</strong> {{ record.patient_id }}</li>
+  <li class="list-group-item"><strong>Doctor:</strong> {{ record.doctor_id }}</li>
+  <li class="list-group-item"><strong>Appointment:</strong> {{ record.appointment_id }}</li>
+  <li class="list-group-item"><strong>Notes:</strong> {{ record.notes }}</li>
+  <li class="list-group-item"><strong>Diagnoses:</strong>
+    <ul>
+      {% for d in record.diagnoses.all %}<li>{{ d.name }}: {{ d.description }}</li>{% endfor %}
+    </ul>
+  </li>
+  <li class="list-group-item"><strong>Prescriptions:</strong>
+    <ul>
+      {% for p in record.prescriptions.all %}<li>{{ p.medication_name }} – {{ p.dosage }} ({{ p.instruction }})</li>{% endfor %}
+    </ul>
+  </li>
+</ul>
+<p class="mt-3">
+  <a class="btn btn-primary" href="{% url 'records:record_update' record.id %}">Edit</a>
+  <a class="btn btn-danger"  href="{% url 'records:record_delete' record.id %}">Delete</a>
+  <a class="btn btn-secondary" href="{% url 'records:record_list' %}">Back to list</a>
+</p>
+{% endblock %}

@@ -48,6 +48,18 @@ services:
     volumes:
       - mysql-appointment-data:/var/lib/mysql
 
+  mysql-medical-record:
+    image: mysql:8.0
+    container_name: mysql-medical-record
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: medical_record_service_db
+    ports:
+      - "3311:3306"
+    volumes:
+      - mysql-medical-record-data:/var/lib/mysql
+
   user-service:
     build: ./user_service
     container_name: user-service
@@ -122,6 +134,26 @@ services:
       DB_HOST: mysql-appointment
       DB_PORT: 3306
 
+  medical-record-service:
+    build:
+      context: ./medical_record_service
+    container_name: medical-record-service
+    command: ["./wait-for-mysql.sh", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+    volumes:
+      - ./medical_record_service:/app
+    ports:
+      - "8005:8000"
+    depends_on:
+      - mysql-medical-record
+      - patient-service
+      - doctor-service
+      - appointment-service
+    environment:
+      DB_NAME: medical_record_service_db
+      DB_USER: root
+      DB_PASSWORD: 123456
+      DB_HOST: mysql-medical-record   
+      DB_PORT: 3306
 
   api-gateway:
     build: ./api_gateway
@@ -134,7 +166,7 @@ services:
       - patient-service
       - doctor-service
       - appointment-service
-      # - medical-record-service
+      - medical-record-service
       # - payment-service
       # - notification-service
 
@@ -143,3 +175,4 @@ volumes:
   mysql-patient-data:
   mysql-doctor-data:
   mysql-appointment-data:
+  mysql-medical-record-data:

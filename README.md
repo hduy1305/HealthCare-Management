@@ -95,7 +95,12 @@ Dự án được thiết kế gồm nhiều service độc lập giao tiếp v�
 
 - docker-compose up --build
 
+<<<<<<< HEAD
 ---
 ## Bản quyền
 - Ngô Hoàng Duy
+=======
+## Bản quyền
+>>>>>>> 229c7d5 (update records service)
 
+- Ngô Hoàng Duy

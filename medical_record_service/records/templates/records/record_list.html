@@ -1,0 +1,37 @@
+{% extends 'records/base.html' %}
+{% block content %}
+<h1>Hồ sơ bệnh án</h1>
+
+{% if records %}
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Bệnh nhân</th>
+      <th>Bác sĩ</th>
+      <th>Ngày tạo</th>
+      <th>Hành động</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in records %}
+    <tr>
+      <td data-label="ID">{{ r.id }}</td>
+      <td data-label="Bệnh nhân">{{ r.patient_id }}</td>
+      <td data-label="Bác sĩ">{{ r.doctor_id }}</td>
+      <td data-label="Ngày tạo">{{ r.created_at|date:"Y-m-d H:i" }}</td>
+      <td data-label="Hành động">
+        <div class="actions">
+          <a href="{% url 'records:record_detail' r.id %}" class="update">Xem</a>
+          <a href="{% url 'records:record_update' r.id %}" class="update">Sửa</a>
+          <a href="{% url 'records:record_delete' r.id %}" class="cancel">Xóa</a>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <div class="no-data">Chưa có hồ sơ bệnh án nào.</div>
+{% endif %}
+{% endblock %}

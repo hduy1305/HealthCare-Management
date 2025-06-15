@@ -1,0 +1,36 @@
+<!-- records/templates/records/record_form.html -->
+{% extends 'records/base.html' %}
+{% block content %}
+<h1>{% if update %}Edit{% else %}New{% endif %} Medical Record</h1>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="id_patient_id">Patient</label>
+    <select name="patient_id" id="id_patient_id" class="form-control">
+      {% for p in patients %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="id_doctor_id">Doctor</label>
+    <select name="doctor_id" id="id_doctor_id" class="form-control">
+      {% for d in doctors %}<option value="{{ d.id }}">{{ d.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="id_appointment_id">Appointment</label>
+    <select name="appointment_id" id="id_appointment_id" class="form-control">
+      {% for a in appointments %}<option value="{{ a.id }}">{{ a.date }} – {{ a.patient_name }}</option>{% endfor %}
+    </select>
+  </div>
+  {{ form.notes.label_tag }}{{ form.notes }}
+  <hr>
+  <h4>Diagnoses</h4>
+  {{ form.diagnoses }}
+  <hr>
+  <h4>Prescriptions</h4>
+  {{ form.prescriptions }}
+  <button type="submit" class="btn btn-success mt-3">{% if update %}Update{% else %}Create{% endif %}</button>
+  <a href="{% url 'records:record_list' %}" class="btn btn-secondary mt-3">Cancel</a>
+</form>
+{% endblock %}
